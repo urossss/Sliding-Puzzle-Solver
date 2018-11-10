@@ -1,0 +1,7 @@
+# Ignore everything
+*
+
+# Don't ignore .gitignore, *.cpp and *.h files
+!.gitignore
+!*.cpp
+!*.h
