@@ -2,15 +2,16 @@
 #define _TREE_H_
 
 #include "Queue.h"
+#include "Board.h"
 #include <iostream>
 using namespace std;
 
 class Tree {
 	struct Node {
-		int value;
+		Board* board;
 		Node *firstChild, *sibling;
-		Node(int v, Node *l = nullptr, Node *r = nullptr) {
-			value = v;
+		Node(Board *b, Node *l = nullptr, Node *r = nullptr) {
+			board = b;
 			firstChild = l;
 			sibling = r;
 		}
@@ -26,7 +27,7 @@ public:
 	~Tree() {				// destructor
 		deleteTree(root);
 	}
-	Tree& add(int x);
+	Tree& add(Board *b);
 	void printTree() {
 		preorderPrint(root);
 	}

@@ -1,8 +1,8 @@
 #include "Tree.h"
 
 
-Tree& Tree::add(int x) {
-	Node *tmp = new Node(x);
+Tree& Tree::add(Board *b) {
+	Node *tmp = new Node(b);
 	if (!root) {
 		root = tmp;
 	} else {
@@ -42,7 +42,7 @@ int Tree::numberOfChildren(Node *root) {	// returns number of children for a sin
 	return cnt;
 }
 
-Tree::Node* Tree::nodeWithLessThenMChildren(Node *root, int m) {
+Tree::Node* Tree::nodeWithLessThenMChildren(Node *root, int m) {	// returns first node with less then m children so that a tree will always be (almost) complete
 	Queue q;
 	q.insert(root);
 	while (!q.empty()) {
@@ -60,20 +60,20 @@ Tree::Node* Tree::nodeWithLessThenMChildren(Node *root, int m) {
 	return nullptr;
 }
 
-void Tree::printChildren(Node *root) {
+void Tree::printChildren(Node *root) {	// prints all root's children
 	if (root) {
 		Node *child = root->firstChild;
 		while (child) {
-			cout << child->value << ' ';
+			cout << child->board << "*****" << endl;
 			child = child->sibling;
 		}
 		cout << endl;
 	}
 }
 
-void Tree::preorderPrint(Node *root) {
+void Tree::preorderPrint(Node *root) {	// prints all nodes in preorder, one node (with its children) per line
 	if (root) {
-		cout << root->value << ": ";
+		cout << *root->board;
 		printChildren(root);
 
 		preorderPrint(root->firstChild);
