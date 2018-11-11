@@ -18,23 +18,30 @@ class Tree {
 	};
 	int m, n;	// degree and number of nodes
 	Node *root;
+	Node *bestSoFar;
 public:
 	Tree(int degree = 2) {	// creating an empty tree
 		m = degree;
 		n = 0;
-		root = nullptr;
+		root = bestSoFar = nullptr;
 	}
 	~Tree() {				// destructor
 		deleteTree(root);
 	}
 	Tree& add(Board *b);
+	Tree & add(Board * b, Node * prev);
+
 	void printTree() {
+		cout << *bestSoFar->board << "=========" << endl;
 		preorderPrint(root);
 	}
 	void deleteTree() {		// deleting a tree
 		deleteTree(root);
 		n = 0;
+		root = bestSoFar = nullptr;
 	}
+
+	void solve();
 
 	// extra features
 	int height();

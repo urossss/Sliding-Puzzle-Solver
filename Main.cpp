@@ -1,4 +1,5 @@
 #include "Tree.h"
+#include <ctime>
 
 void printMenu() {
 	cout << endl;
@@ -12,16 +13,12 @@ void printMenu() {
 }
 
 int main() {
-	/*Tree t(2);
-	t.add(1).add(2).add(3).add(4).add(5).add(6).add(7).add(8).add(9).add(10).add(11).add(12).printTree();
-	//cout << "Number of nodes: " << t.numberOfNodes();
-	cout << "Height: " << t.height() << endl;
-	cout << "Width: " << t.width() << endl;
-	cout << "Number of nodes with degree m: " << t.numberOfNodesWithDegreeM() << endl;*/
 
-	Board start;
-	Tree t;
-	t.add(&start);
+	Board *start = new Board;
+	Tree t(4);
+	t.add(start);
+
+	srand(time(NULL));
 
 	while (true) {
 		printMenu();
@@ -31,21 +28,36 @@ int main() {
 
 		switch (choice) {
 		case 1:
+			t.deleteTree();
+			start = new Board;
+			t.add(start);
 			cout << "Enter starting position: " << endl;
-			cin >> start;
+			cin >> *start;
 			cout << "Enter target position: " << endl;
 			Board::loadTarget();
+			cout << start->isSolvable() << endl;
 			break;
 		case 2:
-			start.generate();
+			t.deleteTree();
+			start = new Board;
+			t.add(start);
+			start->generate();
 			Board::generateTarget();
-			cout << start;
+			cout << *start;
+			Board::printTarget();
 			break;
 		case 3:
-
+			if (start->isSolvable())
+				cout << "The puzzle is solvable." << endl;
+			else
+				cout << "The puzzle is not solvable." << endl;
 			break;
 		case 4:
-
+			if (start->isSolvable()) {
+				t.solve();
+				//t.printTree();
+			} else
+				cout << "The puzzle is not solvable." << endl;
 			break;
 		case 0:
 			exit(0);

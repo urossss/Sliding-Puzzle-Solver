@@ -2,16 +2,25 @@
 
 
 Tree& Tree::add(Board *b) {
-	Node *tmp = new Node(b);
+	Node *node;
 	if (!root) {
-		root = tmp;
+		node = root;
 	} else {
-		Node *node = nodeWithLessThenMChildren(root, m);
-		if (!node) exit(1);
-		if (!node->firstChild) {
-			node->firstChild = tmp;
+		node = nodeWithLessThenMChildren(root, m);
+	}
+	return add(b, node);
+}
+
+Tree& Tree::add(Board *b, Node *prev) {
+	Node *tmp = new Node(b);
+	if (!prev) {
+		root = tmp;
+		bestSoFar = root;
+	} else {
+		if (!prev->firstChild) {
+			prev->firstChild = tmp;
 		} else {
-			Node *child = node->firstChild;
+			Node *child = prev->firstChild;
 			while (child->sibling) {
 				child = child->sibling;
 			}
@@ -64,7 +73,7 @@ void Tree::printChildren(Node *root) {	// prints all root's children
 	if (root) {
 		Node *child = root->firstChild;
 		while (child) {
-			cout << child->board << "*****" << endl;
+			cout << *child->board << "*****" << endl;
 			child = child->sibling;
 		}
 		cout << endl;
@@ -74,7 +83,7 @@ void Tree::printChildren(Node *root) {	// prints all root's children
 void Tree::preorderPrint(Node *root) {	// prints all nodes in preorder, one node (with its children) per line
 	if (root) {
 		cout << *root->board;
-		printChildren(root);
+		//printChildren(root);
 
 		preorderPrint(root->firstChild);
 		preorderPrint(root->sibling);
@@ -90,11 +99,57 @@ void Tree::nodesAtLevel(Node *root, int *cnt, int level) {
 }
 
 int Tree::numberOfNodesWithDegreeM(Node* root, int m) {
-	return root ? 
-		(numberOfChildren(root) == m) + 
-		numberOfNodesWithDegreeM(root->firstChild, m) + 
-		numberOfNodesWithDegreeM(root->sibling, m) 
+	return root ?
+		(numberOfChildren(root) == m) +
+		numberOfNodesWithDegreeM(root->firstChild, m) +
+		numberOfNodesWithDegreeM(root->sibling, m)
 		: 0;
+}
+
+void Tree::solve() {
+	if (!root) return;
+	do {
+		int lastDir = bestSoFar->board->getPrevDir();
+		Node *lastChild = nullptr, *nextBest = nullptr;
+		int minManhattan = INT_MAX;
+		for (int i = 1; i <= 4; i++) {
+			Board *b = bestSoFar->board->slide(i);
+
+			int dir = b->getPrevDir();
+			if (dir == 0) {	// no piece has been moved
+				delete b;
+				continue;
+			}
+			if ((lastDir == 1 && dir == 2) || (lastDir == 2 && dir == 1) ||
+				(lastDir == 3 && dir == 4) || (lastDir == 4 && dir == 3)) {	// we don't want to get the previous position
+				delete b;
+				continue;
+			}
+			if (*b == *bestSoFar->board) {
+				delete b;
+				continue;
+			}
+
+			Node *node = new Node(b);
+			if (!lastChild) {
+				bestSoFar->firstChild = node;
+			} else {
+				lastChild->sibling = node;
+			}
+			lastChild = node;
+			if (node->board->isSolved()) {
+				bestSoFar = node;
+				return;
+			}
+
+			if (b->getManhattan() < minManhattan) {
+				minManhattan = b->getManhattan();
+				nextBest = node;
+				//cout << "Manhattan now: " << minManhattan << endl;
+			}
+		}
+		bestSoFar = nextBest;
+	} while (!bestSoFar->board->isSolved());
 }
 
 int Tree::height() {
