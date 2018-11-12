@@ -35,7 +35,6 @@ int main() {
 			cin >> *start;
 			cout << "Enter target position: " << endl;
 			Board::loadTarget();
-			cout << start->isSolvable() << endl;
 			break;
 		case 2:
 			t.deleteTree();
@@ -55,7 +54,7 @@ int main() {
 		case 4:
 			if (start->isSolvable()) {
 				t.solve();
-				//t.printTree();
+				t.printSolution();
 			} else
 				cout << "The puzzle is not solvable." << endl;
 			break;

@@ -35,6 +35,7 @@ public:
 		cout << *bestSoFar->board << "=========" << endl;
 		preorderPrint(root);
 	}
+	void printSolution();
 	void deleteTree() {		// deleting a tree
 		deleteTree(root);
 		n = 0;
@@ -60,6 +61,8 @@ private:
 	static void preorderPrint(Node *root);
 	static void nodesAtLevel(Node *root, int *cnt, int level);
 	static int numberOfNodesWithDegreeM(Node *root, int m);
+
+	bool containsPosition(Board *b);
 };
 
 #endif

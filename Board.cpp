@@ -37,6 +37,7 @@ Board* Board::slide(Direction d) {
 	Board *b = new Board;
 	*b = *this;
 	b->inversions = -1;
+	b->prevDir = NONE;
 	switch (d) {
 	case UP:
 		if (b->x == 0) break;
@@ -67,7 +68,6 @@ Board* Board::slide(Direction d) {
 		b->prevDir = RIGHT;
 		break;
 	default:
-		b->prevDir = NONE;
 		break;
 	}
 	return b;
@@ -196,13 +196,13 @@ void Board::generateTarget() {
 }
 
 void Board::printTarget() {
-	cout << "******" << endl;
+	cout << "*****" << endl;
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++)
 			cout << target[i][j] << ' ';
 		cout << endl;
 	}
-	cout << "******" << endl;
+	cout << "*****" << endl;
 }
 
 bool operator==(const Board & b1, const Board & b2) {
@@ -226,13 +226,13 @@ istream& operator>>(istream& is, Board& b) {
 }
 
 ostream& operator<<(ostream& os, const Board& b) {
-	os << "------\n";
+	os << "-----\n";
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			os << b.board[i][j] << ' ';
 		}
 		os << endl;
 	}
-	os << "------\n";
+	os << "-----\n";
 	return os;
 }

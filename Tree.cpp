@@ -31,6 +31,24 @@ Tree& Tree::add(Board *b, Node *prev) {
 	return *this;
 }
 
+void Tree::printSolution() {
+	cout << "\nSolution:" << endl;
+	Node *tmp = root;
+	while (tmp) {
+		if (tmp->firstChild) {
+			cout << *tmp->board;
+			cout << "  |\n  v\n";
+			tmp = tmp->firstChild;
+		} else {
+			if (tmp->board->isSolved()) {
+				cout << *tmp->board;
+				return;
+			}
+			tmp = tmp->sibling;
+		}
+	}
+}
+
 void Tree::deleteTree(Node *root) {	// deleting all nodes in a tree
 	if (root) {
 		deleteTree(root->firstChild);
@@ -106,12 +124,26 @@ int Tree::numberOfNodesWithDegreeM(Node* root, int m) {
 		: 0;
 }
 
+bool Tree::containsPosition(Board *b) {
+	Node *tmp = root;
+	while (tmp) {
+		if (*tmp->board == *b)
+			return true;
+		if (tmp->firstChild)
+			tmp = tmp->firstChild;
+		else
+			tmp = tmp->sibling;
+	}
+	return false;
+}
+
 void Tree::solve() {
 	if (!root) return;
-	do {
+	while (!bestSoFar->board->isSolved()) {
 		int lastDir = bestSoFar->board->getPrevDir();
 		Node *lastChild = nullptr, *nextBest = nullptr;
 		int minManhattan = INT_MAX;
+		Node *helper = nullptr;
 		for (int i = 1; i <= 4; i++) {
 			Board *b = bestSoFar->board->slide(i);
 
@@ -122,10 +154,6 @@ void Tree::solve() {
 			}
 			if ((lastDir == 1 && dir == 2) || (lastDir == 2 && dir == 1) ||
 				(lastDir == 3 && dir == 4) || (lastDir == 4 && dir == 3)) {	// we don't want to get the previous position
-				delete b;
-				continue;
-			}
-			if (*b == *bestSoFar->board) {
 				delete b;
 				continue;
 			}
@@ -147,9 +175,18 @@ void Tree::solve() {
 				nextBest = node;
 				//cout << "Manhattan now: " << minManhattan << endl;
 			}
+			/* else if (!nextBest) {
+				helper = node;
+			}*/
 		}
+		/*if (!nextBest) {
+			nextBest = helper;
+		} else {
+			delete helper;
+		}*/
 		bestSoFar = nextBest;
-	} while (!bestSoFar->board->isSolved());
+		cout << *bestSoFar->board;
+	}
 }
 
 int Tree::height() {
