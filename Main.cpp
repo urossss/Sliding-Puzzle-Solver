@@ -1,4 +1,5 @@
 #include "Tree.h"
+#include "Solver.h"
 #include <ctime>
 
 void printMenu() {
@@ -18,7 +19,7 @@ int main() {
 	Tree t(4);
 	t.add(start);
 
-	srand(time(NULL));
+	srand(time(0));
 
 	while (true) {
 		printMenu();
@@ -53,8 +54,18 @@ int main() {
 			break;
 		case 4:
 			if (start->isSolvable()) {
-				t.solve();
-				t.printSolution();
+				//t.solve();
+				//t.printSolution();
+				clock_t t1 = clock(), t2;
+				Board *sol = Solver::solveAStar(start);
+				t2 = clock();
+				double timeElapsed = (double) (t2 - t1) / CLOCKS_PER_SEC * 1000;
+				if (sol) {
+					cout << "Number of moves: " << sol->printPath() << endl;
+					cout << "Time elapsed: " << timeElapsed << "ms" << endl;
+				} else {
+					cout << "Couldn't find a solution.\n";
+				}
 			} else
 				cout << "The puzzle is not solvable." << endl;
 			break;

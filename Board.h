@@ -15,16 +15,19 @@ class Board {
 	Direction prevDir;			// last move used to get to this position
 	int inversions;				// number of inversions needed to solve a puzzle
 	int manhattan;				// heuristics...
+	int level;
+	const Board *parrent;
 public:
 	Board() {
 		x = y = inversions = manhattan = -1;
+		level = 0;
 		prevDir = NONE;
+		parrent = nullptr;
 	}
 	Board(const Board& b) {
 		copy(b);
-	}
-	Board(Board&& b) {
-		copy(b);
+		parrent = &b;
+		level = b.level + 1;
 	}
 
 	void copy(const Board& b);
@@ -34,16 +37,28 @@ public:
 			copy(b);
 		return *this;
 	}
-	Board& operator=(Board&& b) {
-		if (&b != this)
-			copy(b);
-		return *this;
-	}
 
 	friend bool operator==(const Board& b1, const Board& b2);
+	friend bool operator!=(const Board& b1, const Board& b2);
 
 	friend istream& operator>>(istream& is, Board& b);
 	friend ostream& operator<<(ostream& os, const Board& b);
+
+	int h() {	// heuristic value
+		return getManhattan();
+	}
+	int g() {	// steps needed to reach from the start position
+		return level;
+	}
+	int f() {
+		return g() + h();
+	}
+
+	/** 
+	 *	Prints the resulting path calculated using Solver::solveAStar()
+	 *	and returns number of moves
+	 */
+	int printPath() const;
 
 	Direction getPrevDir() {
 		return prevDir;
@@ -54,7 +69,7 @@ public:
 
 	void generate();
 
-	bool isSolved() {
+	bool isSolved() const {
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
 				if (board[i][j] != target[i][j])

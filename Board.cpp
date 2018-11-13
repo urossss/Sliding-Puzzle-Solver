@@ -33,11 +33,24 @@ void Board::generate() {
 	delete[] a;
 }
 
+int Board::printPath() const {
+	int res = -1;
+	if (parrent) {
+		res = parrent->printPath();
+	}
+	cout << *this;
+	if (!isSolved())
+		cout << "  |\n  v\n";
+	return res + 1;
+}
+
 Board* Board::slide(Direction d) {
 	Board *b = new Board;
 	*b = *this;
 	b->inversions = -1;
 	b->prevDir = NONE;
+	b->level = this->level + 1;
+	b->parrent = this;
 	switch (d) {
 	case UP:
 		if (b->x == 0) break;
@@ -70,6 +83,7 @@ Board* Board::slide(Direction d) {
 	default:
 		break;
 	}
+	b->setManhattan();
 	return b;
 }
 
@@ -211,6 +225,10 @@ bool operator==(const Board & b1, const Board & b2) {
 			if (b1.board[i][j] != b2.board[i][j])
 				return false;
 	return true;
+}
+
+bool operator!=(const Board & b1, const Board & b2) {
+	return !(b1 == b2);
 }
 
 istream& operator>>(istream& is, Board& b) {
