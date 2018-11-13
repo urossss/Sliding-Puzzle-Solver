@@ -2,13 +2,37 @@
 
 int Board::target[3][3] = { 0 }, Board::xt = -1, Board::yt = -1;
 
-void Board::copy(const Board &b) {
+void Board::loadTarget() {
 	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++) {
+			cin >> target[i][j];
+			if (!target[i][j]) {
+				xt = i;
+				yt = j;
+			}
+		}
+}
+
+void Board::generateTarget() {
+	int *a = generateArray();
+	for (int i = 0; i < 9; i++) {
+		target[i / 3][i % 3] = a[i];
+		if (!a[i]) {
+			xt = i / 3;
+			yt = i % 3;
+		}
+	}
+	delete[] a;
+}
+
+void Board::printTarget() {
+	cout << "*****" << endl;
+	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++)
-			board[i][j] = b.board[i][j];
-	x = b.x;
-	y = b.y;
-	prevDir = b.prevDir;
+			cout << target[i][j] << ' ';
+		cout << endl;
+	}
+	cout << "*****" << endl;
 }
 
 int* Board::generateArray() {
@@ -19,6 +43,20 @@ int* Board::generateArray() {
 		swap(a[i], a[j]);
 	}
 	return a;
+}
+
+
+
+
+void Board::copy(const Board &b) {
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			board[i][j] = b.board[i][j];
+	x = b.x;
+	y = b.y;
+	prevDir = b.prevDir;
+	parrent = b.parrent;
+	level = b.level;
 }
 
 void Board::generate() {
@@ -145,7 +183,7 @@ void Board::setManhattan() {
 					}
 }
 
-int Board::slidesNeeded() {			// number of slides needed to put 0 at same position as in target
+int Board::slidesNeeded() {
 	Board *b = new Board;
 	*b = *this;
 	int dx = xt - b->x, dy = yt - b->y;
@@ -177,47 +215,6 @@ bool Board::isSolvable() {
 	return !(inversions % 2);
 }
 
-int Board::hits() {
-	int cnt = 0;
-	for (int i = 0; i < 3; i++)
-		for (int j = 0; j < 3; j++)
-			if (board[i][j] == target[i][j])
-				cnt++;
-	return cnt;
-}
-
-void Board::loadTarget() {
-	for (int i = 0; i < 3; i++)
-		for (int j = 0; j < 3; j++) {
-			cin >> target[i][j];
-			if (!target[i][j]) {
-				xt = i;
-				yt = j;
-			}
-		}
-}
-
-void Board::generateTarget() {
-	int *a = generateArray();
-	for (int i = 0; i < 9; i++) {
-		target[i / 3][i % 3] = a[i];
-		if (!a[i]) {
-			xt = i / 3;
-			yt = i % 3;
-		}
-	}
-	delete[] a;
-}
-
-void Board::printTarget() {
-	cout << "*****" << endl;
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++)
-			cout << target[i][j] << ' ';
-		cout << endl;
-	}
-	cout << "*****" << endl;
-}
 
 bool operator==(const Board & b1, const Board & b2) {
 	for (int i = 0; i < 3; i++)
@@ -228,7 +225,11 @@ bool operator==(const Board & b1, const Board & b2) {
 }
 
 bool operator!=(const Board & b1, const Board & b2) {
-	return !(b1 == b2);
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			if (b1.board[i][j] != b2.board[i][j])
+				return true;
+	return false;
 }
 
 istream& operator>>(istream& is, Board& b) {

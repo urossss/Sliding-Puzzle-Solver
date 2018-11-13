@@ -16,8 +16,8 @@ void printMenu() {
 int main() {
 
 	Board *start = new Board;
-	Tree t(4);
-	t.add(start);
+	//Tree t(4);
+	//t.add(start);
 
 	srand(time(0));
 
@@ -29,18 +29,18 @@ int main() {
 
 		switch (choice) {
 		case 1:
-			t.deleteTree();
+			//t.deleteTree();
 			start = new Board;
-			t.add(start);
+			//t.add(start);
 			cout << "Enter starting position: " << endl;
 			cin >> *start;
 			cout << "Enter target position: " << endl;
 			Board::loadTarget();
 			break;
 		case 2:
-			t.deleteTree();
+			//t.deleteTree();
 			start = new Board;
-			t.add(start);
+			//t.add(start);
 			start->generate();
 			Board::generateTarget();
 			cout << *start;

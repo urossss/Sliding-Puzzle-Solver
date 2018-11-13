@@ -4,22 +4,20 @@
 
 
 Board* Solver::solveAStar(Board *start) {
-	//cout << "started...\n";
-	PriorityQueue open;
-	List closed;
+	PriorityQueue open;		// positions that are yet to be processed
+	List closed;			// processed position
 
 	open.insert(start);
 
 	while (!open.empty()) {
 		Board *curr = open.remove();
 
-		if (curr->g() > 50) {	// should be 32, that's the maximum number of moves required to solve any possible combnation
+		if (curr->g() > 50) {	// should be 32, that's the maximum number of moves required to solve any possible combnation, but this is empirical
 			cout << "Iteration error.\n";
 			return nullptr;
 		}
 
 		if (curr->isSolved()) {
-			cout << "Success!\n";
 			return curr;
 		}
 
@@ -28,9 +26,6 @@ Board* Solver::solveAStar(Board *start) {
 		for (int i = 1; i <= 4; i++) {	// generating all children of curr
 			Board *child = curr->slide(i);
 			if (child->getPrevDir() == 0) continue;
-
-			//cout << *child;
-			//cout << child->getManhattan() << endl << endl;
 
 			bool isInOpen = open.contains(child);
 			bool isInClosed = closed.contains(child);
@@ -53,9 +48,6 @@ Board* Solver::solveAStar(Board *start) {
 				}
 			}
 		}
-
-		
 	}
-	//cout << "Failure!\n";
 	return nullptr;
 }

@@ -13,10 +13,11 @@ class Board {
 	int board[3][3] = { 0 };	// current board position
 	int x, y;					// coordinates of an empty field
 	Direction prevDir;			// last move used to get to this position
-	int inversions;				// number of inversions needed to solve a puzzle
-	int manhattan;				// heuristics...
-	int level;
-	const Board *parrent;
+	int manhattan;				// heuristic measure
+	int level;					// number of moves needed to get to this position from start
+	const Board *parrent;		// pointer to previous position
+
+	int inversions;				// number of inversions needed to solve a puzzle, we use this field just to prevent calculating it multiple times
 public:
 	Board() {
 		x = y = inversions = manhattan = -1;
@@ -30,8 +31,6 @@ public:
 		level = b.level + 1;
 	}
 
-	void copy(const Board& b);
-
 	Board& operator=(const Board& b) {
 		if (&b != this)
 			copy(b);
@@ -44,13 +43,13 @@ public:
 	friend istream& operator>>(istream& is, Board& b);
 	friend ostream& operator<<(ostream& os, const Board& b);
 
-	int h() {	// heuristic value
+	int h() {	// manhattan value
 		return getManhattan();
 	}
 	int g() {	// steps needed to reach from the start position
 		return level;
 	}
-	int f() {
+	int f() {	// total heuristic value
 		return g() + h();
 	}
 
@@ -60,15 +59,27 @@ public:
 	 */
 	int printPath() const;
 
+	/**
+	 *	Direction of the last move that led to this position
+	 */
 	Direction getPrevDir() {
 		return prevDir;
 	}
 
-	Board* slide(Direction d);
+	/**
+	 *	Returns a pointer to new board gotten after one move in given direction
+	 */
 	Board* slide(int d);
 
+	/**
+	 *	Generates a random board position
+	 */
 	void generate();
 
+
+	/**
+	 *	Checks whether a board is in target position
+	 */
 	bool isSolved() const {
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
@@ -76,11 +87,12 @@ public:
 					return false;
 		return true;
 	}
+
+	/**
+	 *	Checks whether it is possible to get to target position from this position
+	 */
 	bool isSolvable();
 
-	int hits();
-
-	int inversionsNeeded();
 	int getInversionsNeeded() {
 		if (inversions < 0)
 			setInversionsNeeded();
@@ -95,13 +107,19 @@ public:
 	}
 	void setManhattan();
 
+	/** 
+	 *	Number of slides needed to put 0 at same position as in target
+	 */
 	int slidesNeeded();
 
 	static void loadTarget();
 	static void generateTarget();
 	static void printTarget();
 private:
+	void copy(const Board& b);
+	Board* slide(Direction d);
 	static int* generateArray();
+	int inversionsNeeded();
 };
 
 #endif
