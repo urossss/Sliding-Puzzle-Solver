@@ -21,6 +21,7 @@ public:
 		while (front) {
 			PQNode *old = front;
 			front = front->next;
+			delete old->board;
 			delete old;
 		}
 	}
@@ -43,7 +44,9 @@ public:
 	Board* remove() {
 		if (front) {
 			Board *b = front->board;
-			front = front->next;
+			PQNode *next = front->next;
+			delete front;
+			front = next;
 			return b;
 		}
 		return nullptr;
@@ -69,7 +72,9 @@ public:
 		} else {
 			front = nullptr;
 		}
-		return curr->board;
+		Board *board = curr->board;
+		delete curr;
+		return board;
 	}
 };
 

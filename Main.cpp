@@ -30,6 +30,7 @@ int main() {
 		switch (choice) {
 		case 1:
 			//t.deleteTree();
+			delete start;
 			start = new Board;
 			//t.add(start);
 			cout << "Enter starting position: " << endl;
@@ -39,6 +40,7 @@ int main() {
 			break;
 		case 2:
 			//t.deleteTree();
+			delete start;
 			start = new Board;
 			//t.add(start);
 			start->generate();
@@ -63,6 +65,8 @@ int main() {
 				if (sol) {
 					cout << "Number of moves: " << sol->printPath() << endl;
 					cout << "Time elapsed: " << timeElapsed << "ms" << endl;
+					Board::deleteSolution(sol);
+					sol = nullptr;
 				} else {
 					cout << "Couldn't find a solution.\n";
 				}

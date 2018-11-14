@@ -27,8 +27,8 @@ public:
 	}
 	Board(const Board& b) {
 		copy(b);
-		parrent = &b;
-		level = b.level + 1;
+		//parrent = &b;
+		//level = b.level + 1;
 	}
 
 	Board& operator=(const Board& b) {
@@ -111,6 +111,12 @@ public:
 	 *	Number of slides needed to put 0 at same position as in target
 	 */
 	int slidesNeeded();
+
+	/**
+	 *	Copies the whole path from start to solution so that temporary objects can be deleted safely
+	 */
+	static Board* copySolution(const Board *sol);
+	static void deleteSolution(const Board *sol);
 
 	static void loadTarget();
 	static void generateTarget();

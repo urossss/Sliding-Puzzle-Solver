@@ -7,7 +7,7 @@ Board* Solver::solveAStar(Board *start) {
 	PriorityQueue open;		// positions that are yet to be processed
 	List closed;			// processed position
 
-	open.insert(start);
+	open.insert(new Board(*start));
 
 	while (!open.empty()) {
 		Board *curr = open.remove();
@@ -18,7 +18,7 @@ Board* Solver::solveAStar(Board *start) {
 		}
 
 		if (curr->isSolved()) {
-			return curr;
+			return Board::copySolution(curr);
 		}
 
 		closed.add(curr);
@@ -36,15 +36,19 @@ Board* Solver::solveAStar(Board *start) {
 				Board *tmp = open.remove(child);
 				if (tmp->g() > child->g()) {	// the one in open list was reached by a longer path
 					open.insert(child);
+					delete tmp;
 				} else {
 					open.insert(tmp);
+					delete child;
 				}
 			} else if (isInClosed) {
 				Board *tmp = closed.remove(child);
 				if (tmp->g() > child->g()) {	// the one in closed list was reached by a longer path
 					open.insert(child);
+					delete tmp;
 				} else {
 					closed.add(tmp);
+					delete child;
 				}
 			}
 		}

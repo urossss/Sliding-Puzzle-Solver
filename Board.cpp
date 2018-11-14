@@ -57,6 +57,7 @@ void Board::copy(const Board &b) {
 	prevDir = b.prevDir;
 	parrent = b.parrent;
 	level = b.level;
+	manhattan = b.manhattan;
 }
 
 void Board::generate() {
@@ -83,8 +84,7 @@ int Board::printPath() const {
 }
 
 Board* Board::slide(Direction d) {
-	Board *b = new Board;
-	*b = *this;
+	Board *b = new Board(*this);
 	b->inversions = -1;
 	b->prevDir = NONE;
 	b->level = this->level + 1;
@@ -130,8 +130,7 @@ Board* Board::slide(int d) {
 }
 
 int Board::inversionsNeeded() {			// number of inversions (swaps) needed to get target position
-	Board *b = new Board;
-	*b = *this;
+	Board *b = new Board(*this);
 	int dx = xt - b->x, dy = yt - b->y;
 
 	while (dx) {
@@ -184,8 +183,7 @@ void Board::setManhattan() {
 }
 
 int Board::slidesNeeded() {
-	Board *b = new Board;
-	*b = *this;
+	Board *b = new Board(*this);
 	int dx = xt - b->x, dy = yt - b->y;
 	int cnt = 0;
 
@@ -207,6 +205,22 @@ int Board::slidesNeeded() {
 	}
 	delete b;
 	return cnt;
+}
+
+Board* Board::copySolution(const Board* sol) {
+	if (sol) {
+		Board *cpy = new Board(*sol);
+		cpy->parrent = copySolution(cpy->parrent);
+		return cpy;
+	}
+	return nullptr;
+}
+
+void Board::deleteSolution(const Board *sol) {
+	if (sol) {
+		deleteSolution(sol->parrent);
+		delete sol;
+	}
 }
 
 bool Board::isSolvable() {

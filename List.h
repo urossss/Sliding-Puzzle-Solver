@@ -21,6 +21,7 @@ public:
 		while (first) {
 			Node *old = first;
 			first = first->next;
+			delete old->board;
 			delete old;
 		}
 	}
@@ -49,7 +50,9 @@ public:
 		} else {
 			first = nullptr;
 		}
-		return curr->board;
+		Board *board = curr->board;
+		delete curr;
+		return board;
 	}
 };
 
